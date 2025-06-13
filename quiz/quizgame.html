@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .quiz-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #2980b9;
+    }
+    #next-btn {
+      background: #2ecc71;
+    }
+    #next-btn:hover {
+      background: #27ae60;
+    }
+    #score {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h2 id="question">Question text</h2>
+  <div id="answer-buttons"></div>
+  <button id="next-btn" class="btn">Next</button>
+  <div id="score"></div>
+</div>
+
+<script>
+  const questions = [
+    {
+      question: "What is the capital of France?",
+      answers: [
+        { text: "Paris", correct: true },
+        { text: "London", correct: false },
+        { text: "Rome", correct: false },
+        { text: "Madrid", correct: false }
+      ]
+    },
+    {
+      question: "Which planet is known as the Red Planet?",
+      answers: [
+        { text: "Earth", correct: false },
+        { text: "Mars", correct: true },
+        { text: "Jupiter", correct: false },
+        { text: "Venus", correct: false }
+      ]
+    },
+    {
+      question: "Who wrote 'Hamlet'?",
+      answers: [
+        { text: "William Shakespeare", correct: true },
+        { text: "Mark Twain", correct: false },
+        { text: "J.K. Rowling", correct: false },
+        { text: "Jane Austen", correct: false }
+      ]
+    }
+  ];
+
+  const questionElement = document.getElementById("question");
+  const answerButtons = document.getElementById("answer-buttons");
+  const nextButton = document.getElementById("next-btn");
+  const scoreDisplay = document.getElementById("score");
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+
+  function startQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    nextButton.innerHTML = "Next";
+    scoreDisplay.innerHTML = "";
+    showQuestion();
+  }
+
+  function showQuestion() {
+    resetState();
+    let currentQuestion = questions[currentQuestionIndex];
+    questionElement.innerText = currentQuestion.question;
+
+    currentQuestion.answers.forEach(answer => {
+      const button = document.createElement("button");
+      button.innerText = answer.text;
+      button.classList.add("btn");
+      button.addEventListener("click", () => selectAnswer(button, answer.correct));
+      answerButtons.appendChild(button);
+    });
+  }
+
+  function resetState() {
+    nextButton.style.display = "none";
+    while (answerButtons.firstChild) {
+      answerButtons.removeChild(answerButtons.firstChild);
+    }
+  }
+
+  function selectAnswer(button, correct) {
+    if (correct) {
+      score++;
+      button.style.background = "#2ecc71";
+    } else {
+      button.style.background = "#e74c3c";
+    }
+
+    Array.from(answerButtons.children).forEach(btn => {
+      btn.disabled = true;
+    });
+
+    nextButton.style.display = "block";
+  }
+
+  function showScore() {
+    resetState();
+    questionElement.innerHTML = "Quiz Completed!";
+    scoreDisplay.innerHTML = `Your score: ${score} out of ${questions.length}`;
+    nextButton.innerHTML = "Play Again";
+    nextButton.style.display = "block";
+  }
+
+  function handleNextButton() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      showScore();
+    }
+  }
+
+  nextButton.addEventListener("click", () => {
+    if (currentQuestionIndex < questions.length) {
+      handleNextButton();
+    } else {
+      startQuiz();
+    }
+  });
+
+  startQuiz();
+</script>
+
+</body>
+</html>
